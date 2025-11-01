@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, Loader2, User, Lock, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '@/services/mockApi';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -30,10 +30,8 @@ export const LoginForm = () => {
       if (result.success && result.data) {
         console.log('Login successful:', result.data);
         
-        // first update auth context state
         login(result.data);
         
-        // after delay redirect to dashboard
         setTimeout(() => {
           console.log('Redirecting to dashboard...');
           router.replace('/dashboard');
@@ -64,95 +62,119 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">ورود به سیستم</h1>
-        <p className="text-gray-600">لطفاً اطلاعات خود را وارد کنید</p>
+    <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex" dir="rtl">
+      {/* Left Panel - Green Teal Background */}
+      <div className="w-1/2 bg-gradient-to-br from-teal-500 to-teal-600 relative overflow-hidden hidden lg:flex items-center justify-center p-12">
+        {/* Decorative Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 30%, white 2px, transparent 2px),
+              radial-gradient(circle at 60% 70%, white 3px, transparent 3px),
+              radial-gradient(circle at 40% 50%, white 1px, transparent 1px),
+              repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)
+            `,
+            backgroundSize: '100px 100px, 150px 150px, 80px 80px, 40px 40px'
+          }}
+        />
+        
+        {/* Content */}
+        <div className="relative z-10 text-center text-white">
+          <h1 className="text-6xl font-bold mb-4 leading-tight">
+            نام برند
+            <br />
+            
+          </h1>
+          <p className="text-xl mb-8">متن تست</p>
+          <p className="text-sm opacity-90">نسخه 1.1.1</p>
+        </div>
       </div>
 
-      <div className="space-y-6" onKeyPress={handleKeyPress}>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            نام کاربری
-          </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="
-                w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
-                text-gray-700 focus:border-transparent focus:outline-none
-                focus:text-gray-700 focus:placeholder-gray-400
-            "
-            placeholder="admin یا owner"
-            disabled={loading}
-            autoComplete="username"
-            />
-
+      {/* Right Panel - Login Form */}
+      <div className="w-full lg:w-1/2 p-12 flex flex-col justify-center">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">خوش آمدید</h2>
+          <p className="text-gray-700 leading-relaxed">
+            جهت ورود لطفا نام کاربری و رمز عبور خود را وارد کنید
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            رمز عبور
-          </label>
+        <div className="space-y-5" onKeyPress={handleKeyPress}>
+          {/* Username Input */}
           <div className="relative">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+              <User size={20} />
+            </div>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full pr-12 pl-4 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
+              placeholder="نام کاربری"
+              disabled={loading}
+              autoComplete="username"
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="relative">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+              <Lock size={20} />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="
-                  w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
-                  text-gray-700 focus:border-transparent focus:outline-none
-                  focus:text-gray-700 focus:placeholder-gray-400
-              "
-              placeholder="رمز عبور خود را وارد کنید"
+              className="w-full pr-12 pl-12 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
+              placeholder="رمز عبور"
               disabled={loading}
               autoComplete="current-password"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              disabled={loading}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOff size={20} />
-              ) : (
-                <Eye size={20} />
-              )}
-            </button>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Login Button */}
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                در حال ورود...
+              </>
+            ) : (
+              'ورود به سامانه'
+            )}
+          </button>
+
+
         </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-            <p className="text-red-700 text-sm">{error}</p>
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="animate-spin" size={20} />
-              در حال ورود...
-            </>
-          ) : (
-            'ورود'
-          )}
-        </button>
-      </div>
-
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-        <p className="font-semibold mb-2">اطلاعات تست:</p>
-        <p>admin/admin123</p>
-        <p>owner/owner123</p>
+        {/* Test Credentials */}
+        <div className="mt-8 p-4 bg-gray-50 rounded-lg text-xs text-gray-600">
+          <p className="font-semibold mb-2">اطلاعات تست:</p>
+          <p>admin/admin123</p>
+          <p>owner/owner123</p>
+        </div>
       </div>
     </div>
   );

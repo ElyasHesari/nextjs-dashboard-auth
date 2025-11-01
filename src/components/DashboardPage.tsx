@@ -36,19 +36,19 @@ export const DashboardPage = ({ user, onLogout }: Props) => {
   }, [user.role]);
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-200" dir="rtl">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <header className="bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">داشبورد</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-white">داشبورد</h1>
+            <p className="text-sm text-white/90 mt-1">
               خوش آمدید، {user.username} ({user.role === 'admin' ? 'مدیر' : 'صاحب'})
             </p>
           </div>
           <button
             onClick={onLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition"
+            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition border border-white/20"
           >
             <LogOut size={18} />
             خروج
@@ -59,14 +59,14 @@ export const DashboardPage = ({ user, onLogout }: Props) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Actions Bar */}
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-700">
+        <div className="mb-6 flex items-center justify-between bg-white rounded-xl p-4 shadow-md">
+          <h2 className="text-lg font-bold text-gray-800">
             کارت‌های داشبورد ({user.role === 'admin' ? '5 کارت' : '10 کارت'})
           </h2>
           <button
             onClick={() => fetchData()}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:bg-blue-400"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition disabled:opacity-50 shadow-md hover:shadow-lg"
           >
             <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
             بروزرسانی
@@ -84,13 +84,13 @@ export const DashboardPage = ({ user, onLogout }: Props) => {
 
         {/* Error State */}
         {!loading && error && (
-          <div className="bg-white rounded-xl p-12 text-center shadow-md">
+          <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <AlertCircle className="mx-auto text-red-500 mb-4" size={64} />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">خطا در دریافت داده‌ها</h3>
             <p className="text-gray-600 mb-6">متأسفانه مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.</p>
             <button
               onClick={() => fetchData()}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition shadow-md hover:shadow-lg"
             >
               <RefreshCw size={20} />
               تلاش مجدد
@@ -100,7 +100,7 @@ export const DashboardPage = ({ user, onLogout }: Props) => {
 
         {/* Empty State */}
         {!loading && !error && cards.length === 0 && (
-          <div className="bg-white rounded-xl p-12 text-center shadow-md">
+          <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <div className="text-gray-400 mb-4 text-6xl">📭</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">هیچ کارتی یافت نشد</h3>
             <p className="text-gray-600">در حال حاضر داده‌ای برای نمایش وجود ندارد.</p>
