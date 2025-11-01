@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '@/services/mockApi';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
@@ -94,19 +95,34 @@ export const LoginForm = () => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             رمز عبور
           </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="
-                w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
-                text-gray-700 focus:border-transparent focus:outline-none
-                focus:text-gray-700 focus:placeholder-gray-400
-            "
-            placeholder="رمز عبور خود را وارد کنید"
-            disabled={loading}
-            autoComplete="current-password"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="
+                  w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
+                  text-gray-700 focus:border-transparent focus:outline-none
+                  focus:text-gray-700 focus:placeholder-gray-400
+              "
+              placeholder="رمز عبور خود را وارد کنید"
+              disabled={loading}
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
+          </div>
         </div>
 
         {error && (
