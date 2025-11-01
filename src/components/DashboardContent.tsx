@@ -8,6 +8,7 @@ import { apiService } from '@/services/mockApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCard } from './DashboardCard';
 import { CardSkeleton } from './CardSkeleton';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export const DashboardContent = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -15,6 +16,7 @@ export const DashboardContent = () => {
   const [cards, setCards] = useState<DashboardCardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     console.log('Logging out...');
@@ -61,9 +63,12 @@ export const DashboardContent = () => {
       <header className="bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">داشبورد</h1>
+            <h1 className="text-3xl font-bold text-white">{t('dashboard.title')}</h1>
             <p className="text-sm text-white/90 mt-1">
-              خوش آمدید، {user.username} ({user.role === 'admin' ? 'مدیر' : 'صاحب'})
+              {t('dashboard.welcome', {
+                username: user.username,
+                role: user.role === 'admin' ? t('dashboard.admin') : t('dashboard.owner')
+              })}
             </p>
           </div>
           <button
@@ -71,7 +76,7 @@ export const DashboardContent = () => {
             className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg  border border-white/20"
           >
             <LogOut size={18} />
-            خروج
+            {t('dashboard.logout')}
           </button>
         </div>
       </header>
@@ -81,7 +86,7 @@ export const DashboardContent = () => {
         {/* Actions Bar */}
         <div className="mb-6 flex items-center justify-between bg-white rounded-xl p-4 shadow-md">
           <h2 className="text-lg font-bold text-gray-800">
-            کارت‌های داشبورد ({user.role === 'admin' ? '5 کارت' : '10 کارت'})
+            {t('dashboard.dashboardCards')} ({user.role === 'admin' ? t('dashboard.adminCardsCount') : t('dashboard.ownerCardsCount')})
           </h2>
           <button
             onClick={() => fetchData()}
@@ -89,7 +94,7 @@ export const DashboardContent = () => {
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition disabled:opacity-50 shadow-md hover:shadow-lg"
           >
             <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
-            بروزرسانی
+            {t('dashboard.refresh')}
           </button>
         </div>
 
@@ -106,14 +111,14 @@ export const DashboardContent = () => {
         {!loading && error && (
           <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <AlertCircle className="mx-auto text-red-500 mb-4" size={64} />
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">خطا در دریافت داده‌ها</h3>
-            <p className="text-gray-600 mb-6">متأسفانه مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('dashboard.loadingError')}</h3>
+            <p className="text-gray-600 mb-6">{t('dashboard.loadingErrorMessage')}</p>
             <button
               onClick={() => fetchData()}
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition shadow-md hover:shadow-lg"
             >
               <RefreshCw size={20} />
-              تلاش مجدد
+              {t('dashboard.tryAgain')}
             </button>
           </div>
         )}
@@ -122,8 +127,8 @@ export const DashboardContent = () => {
         {!loading && !error && cards.length === 0 && (
           <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <div className="text-gray-400 mb-4 text-6xl">📭</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">هیچ کارتی یافت نشد</h3>
-            <p className="text-gray-600">در حال حاضر داده‌ای برای نمایش وجود ندارد.</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('dashboard.noCardsFound')}</h3>
+            <p className="text-gray-600">{t('dashboard.noDataMessage')}</p>
           </div>
         )}
 

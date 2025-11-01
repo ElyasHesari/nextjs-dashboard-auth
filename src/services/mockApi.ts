@@ -1,4 +1,5 @@
 import { User, DashboardCard, LoginResponse } from "@/types";
+import { getTranslation } from "@/i18n/useTranslation";
 
 class MockAPIService {
   private delay(ms: number): Promise<void> {
@@ -41,7 +42,7 @@ class MockAPIService {
 
     return {
       success: false,
-      error: "نام کاربری یا رمز عبور اشتباه است",
+      error: getTranslation('login.invalidCredentials'),
     };
   }
 
@@ -52,14 +53,14 @@ class MockAPIService {
     await this.delay(1200);
 
     if (simulateError) {
-      throw new Error("خطا در دریافت داده‌ها");
+      throw new Error(getTranslation('dashboard.loadingError'));
     }
 
     const count = role === "admin" ? 5 : 10;
     return Array.from({ length: count }, (_, i) => ({
       id: i + 1,
       value: Math.floor(Math.random() * 1000) + 100,
-      title: `کارت ${i + 1}`,
+      title: `${getTranslation('common.card')} ${i + 1}`,
     }));
   }
 }

@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardContent } from '@/components/DashboardContent';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // if user is not login, redirect to login
@@ -28,7 +30,7 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-200">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );

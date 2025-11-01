@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoginForm } from '@/components/LoginForm';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, user, isLoading } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // after loading, if authenticated, redirect to dashboard
@@ -34,7 +36,7 @@ export default function LoginPage() {
       <div className="min-h-screen bg-gray-200 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال انتقال به داشبورد...</p>
+          <p className="mt-4 text-gray-600">{t('common.redirectingToDashboard')}</p>
         </div>
       </div>
     );

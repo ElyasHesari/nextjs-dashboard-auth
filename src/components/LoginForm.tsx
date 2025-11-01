@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, Loader2, User, Lock, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '@/services/mockApi';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -14,10 +15,11 @@ export const LoginForm = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleSubmit = async () => {
     if (!username || !password) {
-      setError('لطفاً تمام فیلدها را پر کنید');
+      setError(t('login.fillAllFields'));
       return;
     }
 
@@ -37,7 +39,7 @@ export const LoginForm = () => {
           router.replace('/dashboard');
         }, 100);
       } else {
-        setError(result.error || 'خطای ناشناخته');
+        setError(result.error || t('login.unknownError'));
         setLoading(false);
       }
     } catch (err) {
@@ -45,11 +47,11 @@ export const LoginForm = () => {
       setLoading(false);
       if (err instanceof Error) {
         if (err.message.includes('Network')) {
-          setError('خطا در اتصال به اینترنت. لطفاً دوباره تلاش کنید.');
+          setError(t('login.networkError'));
         } else if (err.message.includes('500')) {
-          setError('خطای سرور. لطفاً بعداً تلاش کنید.');
+          setError(t('login.serverError'));
         } else {
-          setError('خطای غیرمنتظره رخ داده است.');
+          setError(t('login.unexpectedError'));
         }
       }
     }
@@ -82,21 +84,21 @@ export const LoginForm = () => {
         {/* Content */}
         <div className="relative z-10 text-center text-white">
           <h1 className="text-6xl font-bold mb-4 leading-tight">
-            نام برند
+            {t('login.brandName')}
             <br />
             
           </h1>
-          <p className="text-xl mb-8">متن تست</p>
-          <p className="text-sm opacity-90">نسخه 1.1.1</p>
+          <p className="text-xl mb-8">{t('login.testText')}</p>
+          <p className="text-sm opacity-90">{t('login.version')}</p>
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
       <div className="w-full lg:w-1/2 p-12 flex flex-col justify-center">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">خوش آمدید</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('login.welcome')}</h2>
           <p className="text-gray-700 leading-relaxed">
-            جهت ورود لطفا نام کاربری و رمز عبور خود را وارد کنید
+            {t('login.welcomeDescription')}
           </p>
         </div>
 
@@ -111,7 +113,7 @@ export const LoginForm = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full pr-12 pl-4 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
-              placeholder="نام کاربری"
+              placeholder={t('login.username')}
               disabled={loading}
               autoComplete="username"
             />
@@ -135,7 +137,7 @@ export const LoginForm = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pr-12 pl-12 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
-              placeholder="رمز عبور"
+              placeholder={t('login.password')}
               disabled={loading}
               autoComplete="current-password"
             />
@@ -159,10 +161,10 @@ export const LoginForm = () => {
             {loading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                در حال ورود...
+                {t('login.loggingIn')}
               </>
             ) : (
-              'ورود به سامانه'
+              t('login.loginButton')
             )}
           </button>
 
@@ -171,7 +173,7 @@ export const LoginForm = () => {
 
         {/* Test Credentials */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg text-xs text-gray-600">
-          <p className="font-semibold mb-2">اطلاعات تست:</p>
+          <p className="font-semibold mb-2">{t('login.testCredentials')}</p>
           <p>admin/admin123</p>
           <p>owner/owner123</p>
         </div>
