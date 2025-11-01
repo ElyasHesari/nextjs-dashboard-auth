@@ -78,11 +78,16 @@ export const LoginForm = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="
+                w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
+                text-gray-700 focus:border-transparent focus:outline-none
+                focus:text-gray-700 focus:placeholder-gray-400
+            "
             placeholder="admin یا owner"
             disabled={loading}
             autoComplete="username"
-          />
+            />
+
         </div>
 
         <div>
@@ -93,7 +98,11 @@ export const LoginForm = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="
+                w-full px-4 py-3 border border-gray-300 focus:ring-1 focus:border focus:ring-blue-400 rounded-lg
+                text-gray-700 focus:border-transparent focus:outline-none
+                focus:text-gray-700 focus:placeholder-gray-400
+            "
             placeholder="رمز عبور خود را وارد کنید"
             disabled={loading}
             autoComplete="current-password"
@@ -126,8 +135,8 @@ export const LoginForm = () => {
 
       <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
         <p className="font-semibold mb-2">اطلاعات تست:</p>
-        <p>admin / admin123</p>
-        <p>owner / owner123</p>
+        <p>admin/admin123</p>
+        <p>owner/owner123</p>
       </div>
     </div>
   );
