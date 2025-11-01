@@ -8,17 +8,17 @@ class MockAPIService {
   async login(username: string, password: string): Promise<LoginResponse> {
     await this.delay(1500);
 
-    // شبیه‌سازی خطای شبکه (5% احتمال)
+    // simulate network error (5% chance)
     if (Math.random() < 0.05) {
       throw new Error("Network Error");
     }
 
-    // شبیه‌سازی خطای سرور (5% احتمال)
+    // simulate server error (5% chance)
     if (Math.random() < 0.05) {
       throw new Error("Server Error 500");
     }
 
-    // کاربران معتبر
+    // users test data
     const users = [
       { username: "admin", password: "admin123", role: "admin" as const },
       { username: "owner", password: "owner123", role: "owner" as const },

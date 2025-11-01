@@ -29,15 +29,14 @@ export const LoginForm = () => {
       if (result.success && result.data) {
         console.log('Login successful:', result.data);
         
-        // first check state
+        // first update auth context state
         login(result.data);
         
-        // set a time and then redirect
+        // after delay redirect to dashboard
         setTimeout(() => {
           console.log('Redirecting to dashboard...');
-          router.push('/dashboard');
-          router.refresh();
-        }, 200);
+          router.replace('/dashboard');
+        }, 100);
       } else {
         setError(result.error || 'خطای ناشناخته');
         setLoading(false);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertCircle, RefreshCw, LogOut } from 'lucide-react';
 import { DashboardCard as DashboardCardType } from '@/types';
 import { apiService } from '@/services/mockApi';
@@ -9,10 +10,28 @@ import { DashboardCard } from './DashboardCard';
 import { CardSkeleton } from './CardSkeleton';
 
 export const DashboardContent = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
+  const router = useRouter();
   const [cards, setCards] = useState<DashboardCardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const handleLogout = () => {
+    console.log('Logging out...');
+    logout();
+    // after logout, redirect to login
+    setTimeout(() => {
+      router.push('/login');
+    }, 100);
+  };
+
+  // if user is not login, redirect to login
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      console.log('DashboardContent - no user, redirecting to login');
+      router.replace('/login');
+    }
+  }, [isAuthenticated, user, router]);
 
   const fetchData = async (simulateError: boolean = false) => {
     if (!user) return;
@@ -48,7 +67,7 @@ export const DashboardContent = () => {
             </p>
           </div>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition"
           >
             <LogOut size={18} />
