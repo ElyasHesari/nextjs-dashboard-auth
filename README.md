@@ -17,6 +17,11 @@ The user interface design of this project is based on the design presented on th
 - **React DOM**: Version `19.1.0` - React renderer for the browser
 - **TypeScript**: Version `^5` - Programming language with static type support
 
+### State Management & Data Fetching
+
+- **Zustand**: Version `^5.0.2` - Lightweight state management library
+- **React Query**: Version `^5.62.10` - Powerful data synchronization library for React
+
 ### UI Libraries and Icons
 
 - **Lucide React**: Version `^0.552.0` - Modern and beautiful icon collection for React
@@ -40,14 +45,19 @@ src/
 ├── app/                    # Next.js App Router pages
 │   ├── dashboard/          # Dashboard page
 │   ├── login/              # Login page
-│   ├── layout.tsx          # Main layout with AuthProvider
+│   ├── layout.tsx          # Main layout with QueryProvider
 │   └── page.tsx            # Home page (redirect logic)
 ├── components/             # Reusable components
 │   ├── LoginForm.tsx       # Login form
 │   ├── DashboardContent.tsx # Dashboard content
 │   └── ...
-├── contexts/              # Context API for state management
-│   └── AuthContext.tsx     # Authentication management context
+├── stores/                 # Zustand state management
+│   └── authStore.ts        # Authentication store
+├── hooks/                  # Custom React hooks
+│   ├── useAuth.ts          # Authentication hooks
+│   └── useDashboard.ts     # Dashboard data hooks
+├── providers/              # React providers
+│   └── QueryProvider.tsx   # React Query provider
 ├── services/              # API services
 │   └── mockApi.ts         # Mock API service for testing
 ├── types/                 # TypeScript type definitions
@@ -62,35 +72,36 @@ src/
 
 ### 1. State Management System
 
-The project uses **React Context API** for managing authentication state:
+The project uses **Zustand** for managing authentication state:
 
-- **AuthContext** (`src/contexts/AuthContext.tsx`): A Context Provider that manages authentication state
-- **AuthProvider**: Located in `app/layout.tsx` and wraps the entire application
+- **authStore** (`src/stores/authStore.ts`): A Zustand store that manages authentication state with persistence
+- Uses Zustand's `persist` middleware for automatic localStorage integration
 
 ### 2. State Storage
 
 Authentication state is stored **persistently** in the browser's `localStorage`:
 
-- **auth_token**: User authentication token
-- **user**: User information (username, role, token)
+- **auth-storage**: Key used for storing auth state
+- Automatically persisted and rehydrated on page load
 
 **Benefits:**
 - ✅ Maintains login state after page refresh
 - ✅ Fast access to state throughout the application
-- ✅ Automatic management with Context API
+- ✅ Lightweight and performant with Zustand
+- ✅ Automatic persistence with middleware
 
 ### 3. Login Process
 
 ```
 1. User enters credentials (username/password)
-2. LoginForm sends data to apiService.login()
-3. apiService (Mock API) performs validation:
+2. LoginForm uses useLogin() hook with React Query
+3. React Query calls apiService.login() with mutation:
    - Checks username and password
    - Simulates network delay (1.5 seconds)
    - 5% chance of network or server error
 4. On success:
-   - AuthContext.login() is called
-   - Data is saved to localStorage
+   - authStore.login() is called via Zustand
+   - Data is automatically persisted to localStorage
    - User is redirected to /dashboard page
 5. On error:
    - Appropriate error message is displayed
@@ -191,8 +202,9 @@ pnpm lint
 
 ## 🔧 Project Features
 
-- ✅ Complete authentication system with Context API
-- ✅ Persistent storage in localStorage
+- ✅ Complete authentication system with Zustand
+- ✅ Data fetching with React Query
+- ✅ Persistent storage with Zustand middleware
 - ✅ Route Protection
 - ✅ Modern UI with Tailwind CSS
 - ✅ Full RTL support for Persian
@@ -208,6 +220,9 @@ pnpm lint
 - Uses **Turbopack** for faster builds (in dev and build scripts)
 - All client-side components are marked with `'use client'`
 - **TypeScript** is used for type safety
+- Uses **Zustand** for lightweight state management
+- Uses **React Query** for efficient data fetching and caching
+- State persistence handled automatically by Zustand middleware
 
 ## 📄 License
 

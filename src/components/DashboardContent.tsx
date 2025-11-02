@@ -1,21 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, RefreshCw, LogOut } from 'lucide-react';
-import { DashboardCard as DashboardCardType } from '@/types';
-import { apiService } from '@/services/mockApi';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
+import { useDashboardData } from '@/hooks/useDashboard';
 import { DashboardCard } from './DashboardCard';
 import { CardSkeleton } from './CardSkeleton';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export const DashboardContent = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated } = useAuthStore();
   const router = useRouter();
-  const [cards, setCards] = useState<DashboardCardType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { data: cards, isLoading, error, refetch } = useDashboardData(user?.role);
   const { t } = useTranslation();
 
   const handleLogout = () => {
@@ -34,26 +31,6 @@ export const DashboardContent = () => {
       router.replace('/login');
     }
   }, [isAuthenticated, user, router]);
-
-  const fetchData = async (simulateError: boolean = false) => {
-    if (!user) return;
-    
-    setLoading(true);
-    setError(false);
-
-    try {
-      const data = await apiService.getDashboardData(user.role, simulateError);
-      setCards(data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [user]);
 
   if (!user) return null;
 
@@ -89,17 +66,17 @@ export const DashboardContent = () => {
             {t('dashboard.dashboardCards')} ({user.role === 'admin' ? t('dashboard.adminCardsCount') : t('dashboard.ownerCardsCount')})
           </h2>
           <button
-            onClick={() => fetchData()}
-            disabled={loading}
+            onClick={() => refetch()}
+            disabled={isLoading}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition disabled:opacity-50 shadow-md hover:shadow-lg"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
             {t('dashboard.refresh')}
           </button>
         </div>
 
         {/* Loading State */}
-        {loading && (
+        {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: user.role === 'admin' ? 5 : 10 }).map((_, i) => (
               <CardSkeleton key={i} />
@@ -108,13 +85,13 @@ export const DashboardContent = () => {
         )}
 
         {/* Error State */}
-        {!loading && error && (
+        {!isLoading && error && (
           <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <AlertCircle className="mx-auto text-red-500 mb-4" size={64} />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('dashboard.loadingError')}</h3>
             <p className="text-gray-600 mb-6">{t('dashboard.loadingErrorMessage')}</p>
             <button
-              onClick={() => fetchData()}
+              onClick={() => refetch()}
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg transition shadow-md hover:shadow-lg"
             >
               <RefreshCw size={20} />
@@ -124,7 +101,7 @@ export const DashboardContent = () => {
         )}
 
         {/* Empty State */}
-        {!loading && !error && cards.length === 0 && (
+        {!isLoading && !error && cards && cards.length === 0 && (
           <div className="bg-white rounded-2xl p-12 text-center shadow-xl">
             <div className="text-gray-400 mb-4 text-6xl">📭</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('dashboard.noCardsFound')}</h3>
@@ -133,7 +110,7 @@ export const DashboardContent = () => {
         )}
 
         {/* Success State - Cards Grid */}
-        {!loading && !error && cards.length > 0 && (
+        {!isLoading && !error && cards && cards.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {cards.map(card => (
               <DashboardCard key={card.id} card={card} />

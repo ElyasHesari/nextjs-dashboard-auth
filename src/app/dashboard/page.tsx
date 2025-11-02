@@ -3,12 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardContent } from '@/components/DashboardContent';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuthStore();
   const { t } = useTranslation();
 
   useEffect(() => {

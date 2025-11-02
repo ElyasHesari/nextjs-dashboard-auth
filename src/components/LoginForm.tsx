@@ -1,21 +1,32 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { AlertCircle, Loader2, User, Lock, Eye, EyeOff } from 'lucide-react';
-import { apiService } from '@/services/mockApi';
-import { useAuth } from '@/contexts/AuthContext';
+import { useLogin } from '@/hooks/useAuth';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
-  const router = useRouter();
+  const { mutate: login, isPending, error: loginError } = useLogin();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (loginError) {
+      const err = loginError as Error;
+      if (err.message.includes('Network')) {
+        setError(t('login.networkError'));
+      } else if (err.message.includes('500')) {
+        setError(t('login.serverError'));
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError(t('login.unexpectedError'));
+      }
+    }
+  }, [loginError, t]);
 
   const handleSubmit = async () => {
     if (!username || !password) {
@@ -24,37 +35,7 @@ export const LoginForm = () => {
     }
 
     setError('');
-    setLoading(true);
-
-    try {
-      const result = await apiService.login(username, password);
-      
-      if (result.success && result.data) {
-        console.log('Login successful:', result.data);
-        
-        login(result.data);
-        
-        setTimeout(() => {
-          console.log('Redirecting to dashboard...');
-          router.replace('/dashboard');
-        }, 100);
-      } else {
-        setError(result.error || t('login.unknownError'));
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      setLoading(false);
-      if (err instanceof Error) {
-        if (err.message.includes('Network')) {
-          setError(t('login.networkError'));
-        } else if (err.message.includes('500')) {
-          setError(t('login.serverError'));
-        } else {
-          setError(t('login.unexpectedError'));
-        }
-      }
-    }
+    login({ username, password });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -114,7 +95,7 @@ export const LoginForm = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="w-full pr-12 pl-4 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
               placeholder={t('login.username')}
-              disabled={loading}
+              disabled={isPending}
               autoComplete="username"
             />
           </div>
@@ -138,7 +119,7 @@ export const LoginForm = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pr-12 pl-12 py-4 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-gray-500"
               placeholder={t('login.password')}
-              disabled={loading}
+              disabled={isPending}
               autoComplete="current-password"
             />
           </div>
@@ -155,10 +136,10 @@ export const LoginForm = () => {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={isPending}
             className="w-full bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
           >
-            {loading ? (
+            {isPending ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
                 {t('login.loggingIn')}
